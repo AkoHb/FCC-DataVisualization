@@ -1,0 +1,46 @@
+*, 
+::after, 
+::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-color: #96a1c6
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+    background-color: var(--bg-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-align: center;
+    margin: 0.5rem;
+}
+
+hr {
+    margin: 1rem 0;
+}
+
+#user-choice {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 0.5rem;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+select {
+    margin-left: 0.5rem;
+}
