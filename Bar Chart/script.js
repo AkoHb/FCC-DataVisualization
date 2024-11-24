@@ -17,7 +17,7 @@ const dataToJsonFiles = {
         
     },
     "covid-all-world-data": {
-        "link": "https://disease.sh/docs/#/COVID-19%3A%20Worldometers/get_v3_covid_19_countries",
+        "link": "https://disease.sh/v3/covid-19/countries",
         "select-name": "Covid 2019 All countries",
         "fields": [
             ["Count of cases", "cases", "country", "cases", "str"], 
@@ -54,6 +54,119 @@ var w = window.innerWidth;
 var h = window.innerHeight;
 
 // console.log(`Screen is ${w}px width && ${h}px height`)
+
+// arrayOfKeys it's a slice of filds data (all except first value) that contain into state.selectedField
+// short it looks like state.selectedField.slice(1)
+// like full path dataToJsonFiles.default.fields[i].slice(1) 
+
+const getDataForAxis = (data, arrayOfKeys) => {
+
+    if ([data.size, data.length].some(x => x <= 0)) return [[], []];
+
+    let xAxis = [];
+    let yAxis = [];
+    let a,b;
+
+    if (arrayOfKeys[3] === "str") {
+        data.forEach(obj => {
+            a = obj[arrayOfKeys[1]] ? obj[arrayOfKeys[1]] : INVALID;
+            b = obj[arrayOfKeys[2]] ? obj[arrayOfKeys[2]] : INVALID;
+            xAxis.push(a);
+            yAxis.push(b);
+        })
+
+    } else if (arrayOfKeys[3] === "array") {
+        data[arrayOfKeys[0]].forEach((arr) => {
+            a = arr[0] ? arr[0] : INVALID;
+            b = arr[1] ? arr[1] : INVALID;
+            xAxis.push(a);
+            yAxis.push(b);
+        })
+    }
+
+    return [xAxis, yAxis]
+};
+
+const checkAndFilterData = arrOfTwoArrays => {
+    let res = [[], []];
+    if (arrOfTwoArrays.length !== 2) return res;
+
+    // if first and second arrays has different length, slice by shortest array
+
+    let minLength = arrOfTwoArrays[0].length > arrOfTwoArrays[1].length 
+        ? arrOfTwoArrays[1].length
+        : arrOfTwoArrays[0].length
+
+    for (let i = 0; i < minLength; i++) {
+        if ([arrOfTwoArrays[0][i], arrOfTwoArrays[1][i]].every(x => x !== INVALID)) {
+            res[0].push(arrOfTwoArrays[0][i]);
+            res[1].push(arrOfTwoArrays[1][i]);
+        }
+    }
+    console.log(res);
+    
+    return res
+}
+
+
+
+const GetBarChart = ({data, field, fullWidth, fullHeigth}) => {
+
+    // now declare bar sizes. Get it 70% of height and 85% of width
+    const curW = Math.floor(fullWidth * 0.85);
+    const curH = Math.floor(fullHeigth * 0.75);
+
+    // and get the width of single line of bar
+    // for scale we stay 5% of all width
+    const wdthForBarLines = Math.floor(curW * 0.95); 
+    
+    React.useEffect(() => {
+        fillBar();
+    }, [data])
+
+    const fillBar = () => {
+
+        const axis = checkAndFilterData(getDataForAxis(data, field.slice(1)));
+        console.log(`axis is [${axis}]`)
+        
+        if (axis.every(x => x.length > 0)) {
+    
+            // now calculate width lines into bar
+            const barW = Math.floor(wdthForBarLines / axis[0].length);
+    
+            const ymax = d3.max(axis[1]);
+            const yAxis = d3.scaleLinear().domain([0, ymax]).range(0, curH);
+            d3.select("svg")
+                .selectAll("rect")
+                .data(axis[1])
+                .enter()
+                .append("rect");
+    
+            d3.select("svg")
+                .selectAll("rect")
+                .data(axis[1])
+                .style("fill", (d, i) => ( i % 2 == 0 ? "red" : "green"))
+                .attr("x", (d, i) => i * barW)
+                .attr("y", (d) => curH - yScale(d + ymax * 0.1))
+                .attr("height", (d) => yScale(d + ymax * 0.1))
+                .attr("width", barW)
+    
+        } else {
+    
+            alert(`...Data for link '${field[0]}' invalid. Please, check data...`);
+            return;
+        }
+
+    }
+
+    return (
+        <>
+            <svg width={curW} height={curH}></svg>
+        </>
+    );
+}
+
+
 function App () {
 
     const [state, setState] = React.useState({
@@ -68,16 +181,12 @@ function App () {
     React.useEffect(() => {
         async function getData(link) {
             const response = await fetch(link);
-            const data = response.json();
+            const data = await response.json();
             setState(prev => {return {...prev, datas: data}})
             console.log(data)
         }
         getData(state.dataLink);
     }, [])
-
-
-
-
 
     return (
         <>
@@ -107,7 +216,9 @@ function App () {
                 </form>
             </div>
             <hr></hr>
-
+            <div id="bar">
+                <GetBarChart data={state.datas} field={state.selectedField} fullWidth={w} fullHeigth={h}/>
+            </div>           
 
             
         </>
@@ -117,74 +228,3 @@ function App () {
 
 ReactDOM.render(<App />, document.getElementById("root"))
 
-// arrayOfKeys it's a slice of filds data (all except first value) that contain into state.selectedField
-// short it looks like state.selectedField.slice(1)
-// like full path dataToJsonFiles.default.fields[i].slice(1) 
-
-const getDataForAxis = (data, arrayOfKeys) => {
-    if (!data) return [];
-
-    let xAxis = [];
-    let yAxis = [];
-    let a,b;
-
-    if (arrayOfKeys[3] === "str") {
-        data.forEach(obj => {
-            a = obj[arrayOfKeys[1]] ? obj[arrayOfKeys[1]] : INVALID;
-            b = obj[arrayOfKeys[2]] ? obj[arrayOfKeys[2]] : INVALID;
-            xAxis.push(a);
-            yAxis.push(b);
-        })
-
-    } else if (arrayOfKeys[3] === "array") {
-        data[arrayOfKeys[0]].forEach((arr) => {
-            a = obj[arrayOfKeys[1]] ? obj[arrayOfKeys[1]] : INVALID;
-            b = obj[arrayOfKeys[2]] ? obj[arrayOfKeys[2]] : INVALID;
-            xAxis.push(a);
-            yAxis.push(b);
-        })
-    }
-
-    return [xAxis, yAxis]
-};
-
-const checkAndFilterData = arrOfTwoArrays => {
-    let res = [[], []];
-    if (arrOfTwoArrays.length !== 2) return res;
-
-    // if first and second arrays has different length, slice by shortest array
-
-    let minLength = arrOfTwoArrays[0].length > arrOfTwoArrays[1].length 
-        ? arrOfTwoArrays[1].length
-        : arrOfTwoArrays[0].length
-
-    for (let i = 0; i < minLength; i++) {
-        if ([arrOfTwoArrays[0][i], arrOfTwoArrays[1][i]].every(x => x !== INVALID)) {
-            res[0].push(arrOfTwoArrays[0][i]);
-            res[1].push(arrOfTwoArrays[1][i]);
-        }
-    }
-    
-    return res
-}
-
-
-
-const getBarChart = ({data, field, fullWidth, fullHeigth}) => {
-
-    let ans = "";
-
-    const createBarChart = () => {
-        
-        const axis = checkAndFilterData(getDataForAxis(data, state.selectedField.slice(1)));
-
-        if (axis.every(x => x.length > 0)) {
-
-        } else {
-            ans = `<p>...Data for link {state.dataLink} invalid. Please, check data...</p>`;
-            return;
-        }
-
-    }
-    
-}
