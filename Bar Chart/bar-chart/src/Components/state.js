@@ -1,7 +1,6 @@
-import { DATA } from './Data';
-console.log("We're into State f")
+import { data as DATA } from './data';
 
-export default function State () {
+export default function state() {
     return {
         dataLink :  DATA.default.link,
         selectedJson : "default",

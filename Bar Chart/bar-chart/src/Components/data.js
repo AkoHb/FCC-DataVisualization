@@ -9,9 +9,8 @@
     It mean, that we destructuring data. [3rd value, 4th value] ([date, GDP] => ["2019-11-12", "547.1"])
     If value by 3rd and 4th key is simple, select "str"
 */
-console.log("we're visited data file");
 
-export const DATA = {
+export const data = {
 
     "default": {
         "link" : "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json",
@@ -33,3 +32,4 @@ export const DATA = {
         ]
     }
 }
+
