@@ -3,6 +3,9 @@ import React from 'react';
 import STATE from './Components/state.js';
 import { data } from './Components/data.js';
 import FormsSection from './Components/FormSection/formsSection.js';
+import TryLoadData from './Components/Handler/tryLoadData.js';
+import GetDataForAxis from './Components/Handler/getDataForAxis.js';
+import CheckAndFilterData from './Components/Handler/checkAndFilterData.js';
 import './App.css'
 
 const descriptionUnderTitle = "At the bottom you can choose another data file and parameters to see it on the diagram.";
@@ -44,6 +47,21 @@ export default function App() {
       }
     })
   };
+  
+  // Now we need to update datas in state, because it isn' loaded yet
+  // and add hook to looking up for link state
+  // Now we can looking to axis data and will update our bar chart
+  React.useEffect(() => {
+    TryLoadData(state.dataLink).then(res => setState(prev => ({...prev, datas: res })));
+    setTimeout(() => {}, 10000);
+  }, [state.dataLink])
+  
+  const axisesData = CheckAndFilterData(GetDataForAxis(state.datas,state.selectedField.slice(1), INVALID), INVALID)
+
+  // if (axisesData.every(arr => arr.length > 0)) {
+
+  // }
+
   
   return (
     <>

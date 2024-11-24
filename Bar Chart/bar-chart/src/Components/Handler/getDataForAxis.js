@@ -11,12 +11,13 @@ export default function getDataForAxis (data, arrayOfKeys, INVALID) {
     let a,b;
 
     if (arrayOfKeys[3] === "str") {
-        data.forEach(obj => {
-            a = obj[arrayOfKeys[1]] ? obj[arrayOfKeys[1]] : INVALID;
-            b = obj[arrayOfKeys[2]] ? obj[arrayOfKeys[2]] : INVALID;
-            xAxis.push(a);
-            yAxis.push(b);
-        })
+        console.log(data)
+        // data.forEach(obj => {
+        //     a = obj[arrayOfKeys[1]] ? obj[arrayOfKeys[1]] : INVALID;
+        //     b = obj[arrayOfKeys[2]] ? obj[arrayOfKeys[2]] : INVALID;
+        //     xAxis.push(a);
+        //     yAxis.push(b);
+        // })
 
     } else if (arrayOfKeys[3] === "array") {
         data[arrayOfKeys[0]].forEach((arr) => {
