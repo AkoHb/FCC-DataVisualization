@@ -37,7 +37,6 @@ async function tryLoadData (link) {
         
         console.log(GetInfoMsg("Data is loaded"))
         const data = await response.json();
-        
         return data;
         
     } catch(e){

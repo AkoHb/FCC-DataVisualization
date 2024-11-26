@@ -13,15 +13,15 @@ export default function getDataForAxis (data, arrayOfKeys) {
     let yAxis = [];
     let result = [xAxis, yAxis];
 
-    if (!Array.isArray(data) || data.length === 0) {
-        console.debug(GetInfoMsg("The data is empty or not an array"));
+    if (!data) {
+        console.debug(GetInfoMsg("Data is null or undefined."));
         
         return [[], []];
     }
 
-    const lastKey = arrayOfKeys.at(-1);
+    // console.log(data)
 
-    if (lastKey === "str") {
+    if (Array.isArray(data)) {
         
         if (arrayOfKeys.length < 3) {
             console.debug(GetInfoMsg("Invalid arrayOfKeys for 'str' data"));
@@ -29,20 +29,20 @@ export default function getDataForAxis (data, arrayOfKeys) {
         };
 
         result = data.reduce((res, obj) => [
-            [...res[0], obj[arrayOfKeys[1]] ? obj[arrayOfKeys[1]] : null],
-            [...res[1], obj[arrayOfKeys[2]] ? obj[arrayOfKeys[2]] : null]
+            [...res[0], obj[arrayOfKeys[1]] || null],
+            [...res[1], obj[arrayOfKeys[2]] || null]
         ], result)
 
-    } else if (lastKey === "array") {
+    } else if (typeof data === "object") {
 
         if (arrayOfKeys.length < 2) {
             console.debug(GetInfoMsg("Invalid arrayOfKeys for 'array' data"));
             return result;
         };
 
-        result = data[arrayOfKeys[0]].reduce((res, arr) => [
-            [...res[0], arr[0] ? arr[0] : null],
-            [...res[1], arr[1] ? arr[1] : null]
+        result = data[arrayOfKeys[0]]?.reduce((res, arr) => [
+            [...res[0], arr[0] || null],
+            [...res[1], arr[1] || null]
         ], result)
     };
 
