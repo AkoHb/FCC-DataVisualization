@@ -2,10 +2,11 @@ import React from 'react';
 
 import STATE from './Components/state.js';
 import { data } from './Components/data.js';
-import FormsSection from './Components/FormSection/formsSection.js';
-import TryLoadData from './Components/Handler/tryLoadData.js';
+import GetJSONsList from './Components/Filler/getJSONsList.js';
+import GetFieldsList from './Components/Filler/getFieldsList.js';
 import GetDataForAxis from './Components/Handler/getDataForAxis.js';
 import CheckAndFilterData from './Components/Handler/checkAndFilterData.js';
+import GetInfoMsg from "./Components/Filler/getInfoMsg.js"
 import './App.css'
 
 const descriptionUnderTitle = "At the bottom you can choose another data file and parameters to see it on the diagram.";
@@ -14,17 +15,63 @@ const descriptionUnderTitle = "At the bottom you can choose another data file an
 // then we filter that value from axis arrays
 const INVALID = "--E--";
 
-// also get current screen sizes (width and height)
-var w = window.innerWidth;
-var h = window.innerHeight;
-// console.log(`Screen is ${w}px width && ${h}px height`)
-
 
 export default function App() {
 
   const [state, setState] = React.useState(STATE);
 
+  React.useEffect(()=>{
+    async function tryLoadData (link) {
+    
+      console.debug(GetInfoMsg("Get link and try to load data"));
   
+      const regToLink = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
+      let data = null;
+  
+      if (!regToLink.test(link)) {
+          console.log(GetInfoMsg('Link failed RegExp check'));
+          return data;
+      };
+  
+      console.debug(GetInfoMsg('Link successfully checked by RegExp'));
+      
+      try {
+          const response  = await fetch(`${link}`);
+      
+          if (!response.ok) {
+              throw new Error("---During loading data something went wrong--- \n---Please try again after few minutes---");
+          }
+          
+          data = await response.json();
+          console.log(GetInfoMsg("Data is loaded"))
+          
+      } catch(e){
+          console.error(e);
+          console.log("---Link is not valid to load data--- \n---Please, check it---");
+      }
+  
+      setState(prev => ({...prev, datas: data}));
+    };
+    tryLoadData(state.dataLink);
+
+  }, [state.dataLink]);
+
+  React.useEffect(() => {
+    // now we check and filtering data for chosen fields.
+
+    GetDataForAxis(state.datas, state.selectedField.slice(1), INVALID);
+    
+  }, [state.selectedField])
+
+
+
+
+
+
+
+
+
+
   const handleChangeData = (e) => {
     const key = e.target.value;
     setState(prev => {
@@ -47,21 +94,8 @@ export default function App() {
       }
     })
   };
-  
-  // Now we need to update datas in state, because it isn' loaded yet
-  // and add hook to looking up for link state
-  // Now we can looking to axis data and will update our bar chart
-  React.useEffect(() => {
-    TryLoadData(state.dataLink).then(res => setState(prev => ({...prev, datas: res })));
-    setTimeout(() => {}, 10000);
-  }, [state.dataLink])
-  
-  const axisesData = CheckAndFilterData(GetDataForAxis(state.datas,state.selectedField.slice(1), INVALID), INVALID)
 
-  // if (axisesData.every(arr => arr.length > 0)) {
-
-  // }
-
+  console.debug(state.datas)
   
   return (
     <>
@@ -73,21 +107,19 @@ export default function App() {
             React.createElement("hr", {key:crypto.randomUUID()}),
             React.createElement(
               "div", 
-              {id:"user-choice", key:crypto.randomUUID()}, 
-              <FormsSection 
-                  {...{
-                    links: {
-                      links: state.selectedJsonFile,
-                      value: state.selectedJson,
-                      onChange: handleChangeData
-                    }, 
-                    items: {
-                      items: state.fieldsToSelect,
-                      value: state.selectedField[0],
-                      onChange: handleChangeField
-                    }
-                  }}
-              />
+              {id:"user-choice", key:crypto.randomUUID()},
+              <div id='user-select'>
+                <GetJSONsList 
+                  links = {state.selectedJsonFile}
+                  value = {state.selectedJson}
+                  onChange={handleChangeData}
+                />
+                <GetFieldsList 
+                  items = {state.fieldsToSelect}
+                  value = {state.selectedField[0]}
+                  onChange = {handleChangeField}
+                />
+              </div>
             ),
             React.createElement("hr", {key:crypto.randomUUID()}),
             React.createElement("div", {id:"bar", key:crypto.randomUUID()})

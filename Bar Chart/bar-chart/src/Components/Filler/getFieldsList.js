@@ -1,10 +1,10 @@
-export default function getFieldsList({data}) {
+export default function getFieldsList({items, value, onChange}) {
     return (
         <form>
             <label htmlFor="field">With field</label>
-            <select value={data.value} id="field" onChange={data.onChange}>
+            <select value={value} id="field" onChange={onChange}>
                 {
-                    data.items.map(([key, value], i) => <option value={key} key={crypto.randomUUID()}>{key}</option>)
+                    items.map(([key, value], i) => <option value={key} key={crypto.randomUUID()}>{key}</option>)
                 }
             </select>
         </form>

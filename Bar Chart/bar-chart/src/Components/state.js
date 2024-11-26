@@ -7,6 +7,7 @@ export default function state() {
         selectedJsonFile : Object.keys(DATA).map(key => [key, DATA[key]["select-name"]]),
         fieldsToSelect : DATA.default.fields,
         selectedField: DATA.default.fields[0],
-        datas: [],
+        dataForAxis: [],
+        datas: []
     }
 }
