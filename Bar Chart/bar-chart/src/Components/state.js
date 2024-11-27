@@ -8,7 +8,10 @@ export default function state() {
         fieldsToSelect : DATA.default.fields,
         selectedField: DATA.default.fields[0],
         isProcessing: false,
-        dataForAxis: null,
+        xAxis: null,
+        yAxis: null,
+        pathNode: " ==> ",
+        dataType: "json",                       // it can be JSON, CSV and other, but starts from JSON
         datas: []
     }
 }

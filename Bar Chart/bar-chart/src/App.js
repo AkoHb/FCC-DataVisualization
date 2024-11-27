@@ -17,47 +17,47 @@ export default function App() {
   const [state, setState] = React.useState(STATE);
   const [size, setSize] = React.useState({ width: 0, height: 0 });
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      setState(prev => ({ ...prev, isProcessing: true }));
-      try {
-        const data = await LoadData(state.dataLink);
-        if (data) {
-          setState(prev => ({ 
-            ...prev, 
-            datas: data, 
-            isProcessing: false,
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setState(prev => ({ ...prev, isProcessing: false })); // Reset flag on error
+  // React.useEffect(() => {
+  //   const fetchData = async () => {
+  //     setState(prev => ({ ...prev, isProcessing: true }));
+  //     try {
+  //       const data = await LoadData(state.dataLink);
+  //       if (data) {
+  //         setState(prev => ({ 
+  //           ...prev, 
+  //           datas: data, 
+  //           isProcessing: false,
+  //         }));
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setState(prev => ({ ...prev, isProcessing: false })); // Reset flag on error
 
-      }
-    };
-    fetchData();
-  }, [state.dataLink]);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [state.dataLink]);
 
-  React.useEffect(() => {
-    if (state.datas !== null) { // Ensure data is loaded
-      let filteredData = CheckAndFilterData(GetDataForAxis(state.datas, state.selectedField.slice(1)));
-      setState(prev => ({...prev, dataForAxis: filteredData}));
-    }
-  }, [state.selectedField, state.datas]);
+  // React.useEffect(() => {
+  //   if (state.datas !== null) { // Ensure data is loaded
+  //     let filteredData = CheckAndFilterData(GetDataForAxis(state.datas, state.selectedField.slice(1)));
+  //     setState(prev => ({...prev, dataForAxis: filteredData}));
+  //   }
+  // }, [state.selectedField, state.datas]);
 
-  React.useEffect(() => {
-    const updateSize = () => {
-      setSize({ width: window.innerWidth, height: window.innerHeight });
-    };
+  // React.useEffect(() => {
+  //   const updateSize = () => {
+  //     setSize({ width: window.innerWidth, height: window.innerHeight });
+  //   };
 
-    updateSize();
+  //   updateSize();
 
-    window.addEventListener('resize', updateSize);
+  //   window.addEventListener('resize', updateSize);
 
-    return () => {
-      window.removeEventListener('resize', updateSize);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('resize', updateSize);
+  //   };
+  // }, []);
 
 
   const handleChangeData = (e) => {
