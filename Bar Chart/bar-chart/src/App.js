@@ -134,7 +134,10 @@ export default function App() {
           icon={<SiAmazondocumentdb />} 
           links={state.selectedJsonFile}
           value={state.selectedJson}
-          onChange={handleChangeData}
+          onChange={{
+            select: handleChangeData,
+            format: () => console.log("You want to change format")
+          }}
           disabled={state.isTest}
           insertLink={state.isAddLink}
         />
@@ -177,6 +180,7 @@ export default function App() {
         <hr />
         <ChooseChart 
           icon={<SiSoundcharts />}
+          selected={state.selectedChartType}
           disabled={state.isTest}
           onChange={() => console.log("You change chart type")}
         />

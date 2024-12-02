@@ -2,8 +2,8 @@ export default function changeFileOrLink ({icon, links, value, disabled, insertL
     return (
         <>
             <details disabled={disabled} name="user-choice" open>
-            <summary>{icon} Choose file or insert data link</summary>
-            <select value={value} id="data" onChange={onChange}>
+                <summary>{icon} Choose file or insert data link</summary>
+                <select value={value} id="data" onChange={onChange.select}>
                     {
                         links.map(([key, value]) => <option value={key} key={crypto.randomUUID()}>{value}</option>)
                     }
@@ -12,13 +12,13 @@ export default function changeFileOrLink ({icon, links, value, disabled, insertL
                 <div id="file-format" style={insertLink ? {display: "block"} : {display: "none"}}>
                     <p>Choose below file's format</p>
                     <div>
-                        <input type="radio" id="json" name="format" value="json" checked />
-                        <label for="json"> JSON</label>
+                        <input type="radio" id="json" name="format" value="json" checked onChange={onChange.format}/>
+                        <label htmlFor="json"> JSON</label>
                     </div>
 
                     <div>
-                        <input type="radio" id="csv" name="format" value="csv" />
-                        <label for="csv"> CSV</label>
+                        <input type="radio" id="csv" name="format" value="csv" onChange={onChange.format} />
+                        <label htmlFor="csv"> CSV</label>
                     </div>
                 </div>  
                 <div id="add-link" style={insertLink ? {display: "block"} : {display: "none"}} >

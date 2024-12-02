@@ -1,7 +1,7 @@
 export default function chooseAxis ({icons, selected, values, disabled, onChange}) {
     return (
             <details disabled={disabled} name="user-choice">
-                <summary>{icons.main} Choose data for axis or swap axis</summary>
+                <summary>{icons.main} Choose data for axis or swap it</summary>
                 <div id="axis-data">
                     <p>{icons.yIcon} Choose data for Y-axis. It may be numeric data</p>
                     <select value={selected.yAxis} id="y-axis" onChange={onChange.yAxis}>

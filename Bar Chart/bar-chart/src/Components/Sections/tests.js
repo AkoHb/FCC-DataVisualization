@@ -4,7 +4,7 @@ export default function tests ({icon, onChange}) {
           <summary>{icon} Tests</summary>
           <p>Here you can choose the preset for completing FCC test</p>
           <select onChange={onChange} >
-            <option value="default" selected>Possible options below</option>
+            <option value="default" defaultValue>Possible options below</option>
             <option value="tirst">Bar Chart</option>
             <option value="second">Scatter Plot</option>
             <option value="third">Heat Map</option>
