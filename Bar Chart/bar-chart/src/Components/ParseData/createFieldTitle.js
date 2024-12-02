@@ -5,21 +5,45 @@ export default function createFieldTitle({key, name}) {
 
     const separator = STATE.pathNode;
 
-    if (Array.isArray(name)) {
-        return name.reduce((phrase, w) => {
-            if (w.includes(separator)) {
-                
-            } else {
-                let c
-            }
-        }, "");
+    const processArray = arr => arr.map(s => processStr(s.replace(/[_\s]/g, " ")))
 
-    } else if (typeof name === 'string') {
-        return processStr(name);
+    switch (key) {
+        case "info":
+            return Array.isArray(name) 
+                ? processArray(name)
+                : typeof name === "string" 
+                ? processStr(name) 
+                : "";
+
+        case "section":
+            return Array.isArray(name) 
+                ? processStr(name.at(-1)) 
+                : typeof name === "string" 
+                ? processStr(name) 
+                : "";
+
+        case "path":
+            return Array.isArray(name) 
+                ? name.join(separator) 
+                : `${name} ${separator}`;
+
+        default:
+            return ""; 
     }
-
-    return "";
 };
 
 
-const pro
+const processStr = string => {
+    if (!string) return "";
+
+    return string
+        .split("")
+        .map((ch, i) => i === 0 
+            ? ch.toUpperCase() 
+            : ch !== ch.toLowerCase() 
+            ? ` ${ch.toLowerCase()}` 
+            : ch
+        )
+        .join("");
+
+}

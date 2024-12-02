@@ -1,14 +1,40 @@
 import React from 'react';
 
+// Data
 import STATE from './Components/state.js';
 import { data } from './Components/data.js';
+
+// Sections
+import Tests from './Components/Sections/tests.js';
+import ChangeFileOrLink from './Components/Sections/changeFileOrLink.js';
+import HandleChoose from './Components/Sections/handleChoose.js';
+import ChooseAxis from './Components/Sections/chooseAxis.js';
+import ChooseInfoMsg from './Components/Sections/chooseInfoMsg.js';
+import ChooseChart from './Components/Sections/chooseChart.js';
+
+// Handlers
 import LoadData from './Components/ParseData/loadData.js';
 import GetJSONsList from './Components/Filler/getJSONsList.js';
 import GetFieldsList from './Components/Filler/getFieldsList.js';
 import GetDataForAxis from './Components/Handler/getDataForAxis.js';
 import CheckAndFilterData from './Components/Handler/checkAndFilterData.js';
 import GetBarChart from './Components/Barchart/getBarChart.js';
+
+// Styles
 import './App.css'
+
+// Icons
+import { SiTestcafe } from "react-icons/si";            // Test icon
+import { SiAmazondocumentdb } from "react-icons/si";    // Choose file or insert link icon
+import { LuAxis3D } from "react-icons/lu";              // Select or swap axis icon
+import { TbAxisY } from "react-icons/tb";               // Y axis icon
+import { TbAxisX } from "react-icons/tb";               // X axis icon
+import { IoMdSwap } from "react-icons/io";              // swap axis icon
+import { SlInfo } from "react-icons/sl";                // info messages icon
+import { SiSoundcharts } from "react-icons/si";         // choose chart type icon
+
+
+
 
 const descriptionUnderTitle = "At the bottom you can choose another data file and parameters to see it on the diagram.";
 
@@ -62,14 +88,24 @@ export default function App() {
 
   const handleChangeData = (e) => {
     const key = e.target.value;
+    console.log(key)
     const selectedData = data[key];
     setState(prev => {
-      return {
-        ...prev,
-        dataLink: selectedData.link,
-        selectedJson: key,
-        fieldsToSelect: selectedData.fields,
-        selectedField: selectedData.fields[0],
+      if (key === "add-link") {
+        return {
+          ...prev,
+          isAddLink: true,
+          selectedJson: "Add link"
+        }
+      } else {
+        return {
+          ...prev,
+          dataLink: selectedData.link,
+          selectedJson: key,
+          fieldsToSelect: selectedData.fields,
+          selectedField: selectedData.fields[0],
+          isAddLink: false,
+        }
       }
     })
   };
@@ -89,26 +125,63 @@ export default function App() {
     <>
       <div>
         <div>
-        <h2 id="title">Bar Chart</h2>
+        <h2 id="title">Charts for FCC</h2>
         <p id="description">{descriptionUnderTitle}</p>
         <hr />
-        <div id="user-choice">
-          <div id="user-select">
-            <GetJSONsList 
-              links={state.selectedJsonFile}
-              value={state.selectedJson}
-              onChange={handleChangeData}
-              disabled={state.isProcessing}
-            />
-            <GetFieldsList 
-              items={state.fieldsToSelect}
-              value={state.selectedField[0]}
-              onChange={handleChangeField}
-              disabled={state.isProcessing}
-            />
-          </div>
-        </div>
+        <Tests icon={<SiTestcafe />} onChange={HandleChoose} />
         <hr />
+        <ChangeFileOrLink
+          icon={<SiAmazondocumentdb />} 
+          links={state.selectedJsonFile}
+          value={state.selectedJson}
+          onChange={handleChangeData}
+          disabled={state.isTest}
+          insertLink={state.isAddLink}
+        />
+        <hr />
+        <ChooseAxis 
+
+          icons={{
+            main : <LuAxis3D />,
+            yIcon: <TbAxisY />,
+            xIcon: <TbAxisX />,
+            swapIcon: <IoMdSwap/>
+          }}
+
+          values={{
+            yAxis: state.yAxis,
+            xAxis: state.xAxis
+          }}
+
+          selected={{
+            yAxis: state.selectedYAxis,
+            xAxis: state.selectedXAxis
+          }}
+
+          disabled={state.isTest}
+
+          onChange={{
+            yAxis: () => console.log("Changed y-axis"),
+            xAxis: () => console.log("Changed x-axis"),
+            swap: () => console.log("Press swaped")
+          }}
+        />
+        <hr />
+        <ChooseInfoMsg 
+          icon={<SlInfo />}
+          values={state.infoData}
+          selected={state.selectedInfoData}
+          disabled={state.isTest}
+          onChange={() => console.log("You change info msg ")}
+        />
+        <hr />
+        <ChooseChart 
+          icon={<SiSoundcharts />}
+          disabled={state.isTest}
+          onChange={() => console.log("You change chart type")}
+        />
+        <hr />
+        <button id='get-chart'>Get Diagramm</button>
         <div id="bar">
           <GetBarChart data={state.dataForAxis} width={size.width} height={size.height}/>
         </div>
