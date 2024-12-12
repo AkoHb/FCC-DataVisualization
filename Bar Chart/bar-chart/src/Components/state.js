@@ -19,7 +19,8 @@ export default function state() {
         dataStore: {},                                  // it can be array, object and other types, but now it's don't supported
         isTest: false,                                  // it will disable all fields to user select, if we'll begun tests
         isAddLink: false,                               // that flag will toggle display style between hide/show to insert link
-        selectedChartType: "bar"                        // here contain chart type for next processing
+        selectedChartType: "bar",                       // here contain chart type for next processing
+        processingBar: false
     }
 }
     

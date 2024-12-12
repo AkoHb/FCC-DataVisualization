@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
 // Data
 import STATE from './Components/state.js';
@@ -7,7 +7,7 @@ import { data } from './Components/data.js';
 // Sections
 import Tests from './Components/Sections/tests.js';
 import ChangeFileOrLink from './Components/Sections/changeFileOrLink.js';
-import HandleChoose from './Components/Sections/handleChoose.js';
+import HandleTest from './Components/Sections/handleTest.js';
 import ChooseAxis from './Components/Sections/chooseAxis.js';
 import ChooseInfoMsg from './Components/Sections/chooseInfoMsg.js';
 import ChooseChart from './Components/Sections/chooseChart.js';
@@ -84,8 +84,7 @@ export default function App() {
   //     window.removeEventListener('resize', updateSize);
   //   };
   // }, []);
-
-
+  
   const handleChangeData = (e) => {
     const key = e.target.value;
     console.log(key)
@@ -102,8 +101,6 @@ export default function App() {
           ...prev,
           dataLink: selectedData.link,
           selectedJson: key,
-          fieldsToSelect: selectedData.fields,
-          selectedField: selectedData.fields[0],
           isAddLink: false,
         }
       }
@@ -121,6 +118,18 @@ export default function App() {
     })
   };
 
+  const handleChangeLink = (link) => {
+    console.log(link);
+    // setState(prev => ({...prev, dataLink: link}))
+  }
+
+  const handleChangeFormat = (e) => {
+    console.log(e)
+    // let format = e.target.value;
+    // console.debug(`You changed file format from "${state.dataType.toUpperCase()}" to "${format.toUpperCase()}"`);
+    // setState(prev => ({...prev, dataType: format}));
+  }
+
   return (
     <>
       <div>
@@ -128,66 +137,78 @@ export default function App() {
         <h2 id="title">Charts for FCC</h2>
         <p id="description">{descriptionUnderTitle}</p>
         <hr />
-        <Tests icon={<SiTestcafe />} onChange={HandleChoose} />
-        <hr />
-        <ChangeFileOrLink
-          icon={<SiAmazondocumentdb />} 
-          links={state.selectedJsonFile}
-          value={state.selectedJson}
-          onChange={{
-            select: handleChangeData,
-            format: () => console.log("You want to change format")
-          }}
-          disabled={state.isTest}
-          insertLink={state.isAddLink}
-        />
-        <hr />
-        <ChooseAxis 
+        <div className="container">
+          <Tests icon={<SiTestcafe />} onChange={HandleTest} />
+          <hr />
+          <ChangeFileOrLink
+            icon={<SiAmazondocumentdb />} 
+            links={state.selectedJsonFile}
+            value={state.selectedJson}
+            onChange={{
+              select: handleChangeData,
+              format: handleChangeFormat
+            }}
+            onSubmit={handleChangeLink}
+            disabled={state.isTest}
+            insertLink={state.isAddLink}
+          />
+          <hr />
+          <ChooseAxis 
 
-          icons={{
-            main : <LuAxis3D />,
-            yIcon: <TbAxisY />,
-            xIcon: <TbAxisX />,
-            swapIcon: <IoMdSwap/>
-          }}
+            icons={{
+              main : <LuAxis3D />,
+              yIcon: <TbAxisY />,
+              xIcon: <TbAxisX />,
+              swapIcon: <IoMdSwap/>
+            }}
 
-          values={{
-            yAxis: state.yAxis,
-            xAxis: state.xAxis
-          }}
+            values={{
+              yAxis: state.yAxis,
+              xAxis: state.xAxis
+            }}
 
-          selected={{
-            yAxis: state.selectedYAxis,
-            xAxis: state.selectedXAxis
-          }}
+            selected={{
+              yAxis: state.selectedYAxis,
+              xAxis: state.selectedXAxis
+            }}
 
-          disabled={state.isTest}
+            disabled={state.isTest}
 
-          onChange={{
-            yAxis: () => console.log("Changed y-axis"),
-            xAxis: () => console.log("Changed x-axis"),
-            swap: () => console.log("Press swaped")
-          }}
-        />
-        <hr />
-        <ChooseInfoMsg 
-          icon={<SlInfo />}
-          values={state.infoData}
-          selected={state.selectedInfoData}
-          disabled={state.isTest}
-          onChange={() => console.log("You change info msg ")}
-        />
-        <hr />
-        <ChooseChart 
-          icon={<SiSoundcharts />}
-          selected={state.selectedChartType}
-          disabled={state.isTest}
-          onChange={() => console.log("You change chart type")}
-        />
-        <hr />
-        <button id='get-chart'>Get Diagramm</button>
+            onChange={{
+              yAxis: () => console.log("Changed y-axis"),
+              xAxis: () => console.log("Changed x-axis"),
+              swap: () => console.log("Press swaped")
+            }}
+          />
+          <hr />
+          <ChooseInfoMsg 
+            icon={<SlInfo />}
+            values={state.infoData}
+            selected={state.selectedInfoData}
+            disabled={state.isTest}
+            onChange={() => console.log("You change info msg ")}
+          />
+          <hr />
+          <ChooseChart 
+            icon={<SiSoundcharts />}
+            selected={state.selectedChartType}
+            disabled={state.isTest}
+            onChange={() => console.log("You change chart type")}
+          />
+          <hr />
+          <div className='btns'>
+            <button id='get-chart'>
+              Get Diagramm
+            </button>
+            <button id="get-another-one"> 
+              Get another one
+            </button>
+          </div>
+        </div>
         <div id="bar">
-          <GetBarChart data={state.dataForAxis} width={size.width} height={size.height}/>
+          <Suspense fallback={<p>Processing data...</p>}>
+            <GetBarChart data={state.dataForAxis} width={size.width} height={size.height}/>
+          </Suspense>
         </div>
       </div>
     </div>

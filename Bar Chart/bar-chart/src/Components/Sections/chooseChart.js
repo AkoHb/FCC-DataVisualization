@@ -11,8 +11,8 @@ export default function chooseChart ({icon, disabled, onChange}) {
     return (
         <>
             <details disabled={disabled} name="user-choice">
-                <summary>{icon} Choose chart type</summary>
-                <div id="chart-types">
+                <summary key={crypto.randomUUID()}>{icon} Choose chart type</summary>
+                <div id="chart-types" key={crypto.randomUUID()}>
                     {
                         chartTypes.map((arr, i) => {
                             const [id, value, name] = arr;

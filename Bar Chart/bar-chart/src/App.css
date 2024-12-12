@@ -50,3 +50,18 @@ select {
 option {
   line-height: 2;
 }
+
+.column {
+  display: grid;
+  grid-template-columns: 1fr;
+  
+}
+
+.row {
+  display: inline-flex;
+  grid-template-rows: 1fr;
+}
+
+button {
+  display: inline;
+}
